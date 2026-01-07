@@ -60,13 +60,34 @@ fun StudentFinancialDetailsScreen(viewModel: StudentFinancialDetailsViewModel) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
-
     var editingMonth by remember { mutableStateOf<MonthFinancialStatus?>(null) }
 
     LaunchedEffect(Unit) {
         viewModel.messageFlow.collect { message ->
             Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = uiState.studentName,
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                }
+            )
+        }
+    ) { innerPadding ->
+        StudentFinancialDetailsContent(
+            uiState = uiState,
+            modifier = Modifier.padding(innerPadding),
+            onPreviousYear = { viewModel.previousYear() },
+            onNextYear = { viewModel.nextYear() },
+            onPayClick = { editingMonth = it },
+            onEditClick = { editingMonth = it }
+        )
     }
 
     editingMonth?.let { month ->
@@ -87,47 +108,39 @@ fun StudentFinancialDetailsScreen(viewModel: StudentFinancialDetailsViewModel) {
             }
         )
     }
+}
 
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = uiState.studentName,
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                }
-            )
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp)
-        ) {
-            Spacer(modifier = Modifier.height(16.dp))
+@Composable
+fun StudentFinancialDetailsContent(
+    uiState: com.oqba26.hozorghiabapp.viewmodel.StudentFinancialDetailsUiState,
+    modifier: Modifier = Modifier,
+    onPreviousYear: () -> Unit,
+    onNextYear: () -> Unit,
+    onPayClick: (MonthFinancialStatus) -> Unit,
+    onEditClick: (MonthFinancialStatus) -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
 
-            YearSelector(
-                year = uiState.year,
-                onPrevious = { viewModel.previousYear() },
-                onNext = { viewModel.nextYear() }
-            )
+        YearSelector(
+            year = uiState.year,
+            onPrevious = onPreviousYear,
+            onNext = onNextYear
+        )
 
-            Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(uiState.months) { month ->
-                    MonthFinancialRow(
-                        month = month,
-                        onPayClick = {
-                            editingMonth = month
-                        },
-                        onEditClick = {
-                            editingMonth = month
-                        }
-                    )
-                }
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(uiState.months) { month ->
+                MonthFinancialRow(
+                    month = month,
+                    onPayClick = { onPayClick(month) },
+                    onEditClick = { onEditClick(month) }
+                )
             }
         }
     }

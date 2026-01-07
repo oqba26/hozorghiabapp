@@ -37,52 +37,67 @@ fun StudentAttendanceDetailsScreen(viewModel: StudentAttendanceDetailsViewModel)
             )
         }
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp)
-        ) {
-            YearSelector(
-                year = uiState.year,
-                onPrevious = { viewModel.previousYear() },
-                onNext = { viewModel.nextYear() }
-            )
+        StudentAttendanceDetailsContent(
+            uiState = uiState,
+            modifier = Modifier.padding(innerPadding),
+            onPreviousYear = { viewModel.previousYear() },
+            onNextYear = { viewModel.nextYear() }
+        )
+    }
+}
 
-            Spacer(modifier = Modifier.height(16.dp))
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun StudentAttendanceDetailsContent(
+    uiState: com.oqba26.hozorghiabapp.viewmodel.StudentAttendanceDetailsUiState,
+    modifier: Modifier = Modifier,
+    onPreviousYear: () -> Unit,
+    onNextYear: () -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        YearSelector(
+            year = uiState.year,
+            onPrevious = onPreviousYear,
+            onNext = onNextYear
+        )
 
-            if (uiState.months.all { it.days.isEmpty() }) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(
-                        text = stringResource(R.string.no_records_found_for_year, uiState.year.toString().englishDigitsToPersian()),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            } else {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    uiState.months.forEach { month ->
-                        if (month.days.isNotEmpty()) {
-                            stickyHeader {
-                                Surface(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    color = MaterialTheme.colorScheme.surface,
-                                    tonalElevation = 2.dp
-                                ) {
-                                    Text(
-                                        text = month.monthName,
-                                        style = MaterialTheme.typography.titleSmall,
-                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (uiState.months.all { it.days.isEmpty() }) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(
+                    text = stringResource(R.string.no_records_found_for_year, uiState.year.toString().englishDigitsToPersian()),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                uiState.months.forEach { month ->
+                    if (month.days.isNotEmpty()) {
+                        stickyHeader {
+                            Surface(
+                                modifier = Modifier.fillMaxWidth(),
+                                color = MaterialTheme.colorScheme.surface,
+                                tonalElevation = 2.dp
+                            ) {
+                                Text(
+                                    text = month.monthName,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
                             }
-                            items(month.days) { day ->
-                                AttendanceDayRow(day)
-                            }
+                        }
+                        items(month.days) { day ->
+                            AttendanceDayRow(day)
                         }
                     }
                 }
