@@ -61,6 +61,7 @@ fun StudentFinancialDetailsScreen(viewModel: StudentFinancialDetailsViewModel) {
     val context = LocalContext.current
 
 
+    @Suppress("UNUSED_VALUE")
     var editingMonth by remember { mutableStateOf<MonthFinancialStatus?>(null) }
 
     LaunchedEffect(Unit) {
