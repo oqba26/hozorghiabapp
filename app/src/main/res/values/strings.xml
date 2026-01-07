@@ -25,8 +25,8 @@
     <string name="toggle_payment_status">تغییر وضعیت پرداخت</string>
     <string name="previous_year">سال قبل</string>
     <string name="next_year">سال بعد</string>
-    <string name="add_new_student_title">دانش آموز جدید</string>
-    <string name="student_name_placeholder">نام دانش آموز</string>
+    <string name="add_new_student_title">افزودن دانش آموز جدید</string>
+    <string name="student_name_placeholder">نام دانش آموز جدید را وارد کنید</string>
     <string name="add_button">افزودن</string>
     <string name="students_list_title">لیست دانش آموزان</string>
     <string name="delete_button">حذف</string>
