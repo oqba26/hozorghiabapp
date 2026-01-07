@@ -1,3 +1,5 @@
+@file:Suppress("AssignedValueIsNeverRead")
+
 package com.oqba26.hozorghiabapp.ui
 
 import androidx.compose.foundation.layout.Arrangement
@@ -51,7 +53,7 @@ fun StudentsScreen(viewModel: StudentsViewModel) {
         Column(modifier = Modifier.padding(16.dp)) {
 
             Text(
-                text = stringResource(R.string.tab_students) + stringResource(R.string.add_new_student_suffix),
+                text = stringResource(R.string.add_new_student_title),
                 style = MaterialTheme.typography.titleMedium
             )
 

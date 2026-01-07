@@ -32,7 +32,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.oqba26.hozorghiabapp.AttendanceItemUi
 import com.oqba26.hozorghiabapp.AttendanceStatus
-import com.oqba26.hozorghiabapp.AttendanceUiState
 import com.oqba26.hozorghiabapp.R
 import com.oqba26.hozorghiabapp.util.englishDigitsToPersian
 import com.oqba26.hozorghiabapp.util.toPersianDateFullString

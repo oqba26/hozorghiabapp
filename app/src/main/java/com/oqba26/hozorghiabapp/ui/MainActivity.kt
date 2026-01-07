@@ -1,3 +1,5 @@
+@file:Suppress("AssignedValueIsNeverRead")
+
 package com.oqba26.hozorghiabapp.ui
 
 import android.os.Bundle
@@ -36,9 +38,25 @@ import com.oqba26.hozorghiabapp.HozorGhiabApplication
 import com.oqba26.hozorghiabapp.R
 import com.oqba26.hozorghiabapp.AppSettings
 import com.oqba26.hozorghiabapp.ui.theme.HozorGhiabAppTheme
-import com.oqba26.hozorghiabapp.viewmodel.*
+import com.oqba26.hozorghiabapp.viewmodel.SettingsViewModel
+import com.oqba26.hozorghiabapp.viewmodel.StudentsViewModel
+import com.oqba26.hozorghiabapp.viewmodel.AttendanceViewModel
+import com.oqba26.hozorghiabapp.viewmodel.FinancialViewModel
+import com.oqba26.hozorghiabapp.viewmodel.StudentFinancialDetailsViewModel
+import com.oqba26.hozorghiabapp.viewmodel.StudentAttendanceDetailsViewModel
+import com.oqba26.hozorghiabapp.viewmodel.StudentsViewModelFactory
+import com.oqba26.hozorghiabapp.viewmodel.AttendanceViewModelFactory
+import com.oqba26.hozorghiabapp.viewmodel.FinancialViewModelFactory
+import com.oqba26.hozorghiabapp.viewmodel.StudentFinancialDetailsViewModelFactory
+import com.oqba26.hozorghiabapp.viewmodel.StudentAttendanceDetailsViewModelFactory
 
 import androidx.compose.foundation.ComposeFoundationFlags
+
+sealed interface NavDestination {
+    data object Main : NavDestination
+    data class FinancialDetails(val studentId: Long) : NavDestination
+    data class AttendanceDetails(val studentId: Long) : NavDestination
+}
 
 class MainActivity : ComponentActivity() {
 
@@ -64,8 +82,8 @@ class MainActivity : ComponentActivity() {
                 FinancialViewModelFactory(repository)
             }
 
-            var selectedFinancialStudentId by remember { mutableStateOf<Long?>(null) }
-            var selectedAttendanceStudentId by remember { mutableStateOf<Long?>(null) }
+            @Suppress("UNUSED_VALUE")
+            var navDestination: NavDestination by remember { mutableStateOf(NavDestination.Main) }
 
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                 HozorGhiabAppTheme(fontKey = settings.fontKey) {
@@ -73,33 +91,37 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
                     ) {
-                        if (selectedFinancialStudentId != null) {
-                            val studentFinancialDetailsViewModel: StudentFinancialDetailsViewModel = viewModel(
-                                key = "fin_${selectedFinancialStudentId}",
-                                factory = StudentFinancialDetailsViewModelFactory(selectedFinancialStudentId!!, repository)
-                            )
-                            StudentFinancialDetailsScreen(viewModel = studentFinancialDetailsViewModel)
-                            BackHandler {
-                                selectedFinancialStudentId = null
+                        when (val dest = navDestination) {
+                            is NavDestination.Main -> {
+                                MainScreen(
+                                    studentsViewModel = studentsViewModel,
+                                    settingsViewModel = settingsViewModel,
+                                    attendanceViewModel = attendanceViewModel,
+                                    financialViewModel = financialViewModel,
+                                    onNavigateToFinancialDetails = { navDestination = NavDestination.FinancialDetails(it) },
+                                    onNavigateToAttendanceDetails = { navDestination = NavDestination.AttendanceDetails(it) }
+                                )
                             }
-                        } else if (selectedAttendanceStudentId != null) {
-                            val studentAttendanceDetailsViewModel: StudentAttendanceDetailsViewModel = viewModel(
-                                key = "att_${selectedAttendanceStudentId}",
-                                factory = StudentAttendanceDetailsViewModelFactory(selectedAttendanceStudentId!!, repository)
-                            )
-                            StudentAttendanceDetailsScreen(viewModel = studentAttendanceDetailsViewModel)
-                            BackHandler {
-                                selectedAttendanceStudentId = null
+                            is NavDestination.FinancialDetails -> {
+                                val studentFinancialDetailsViewModel: StudentFinancialDetailsViewModel = viewModel(
+                                    key = "fin_${dest.studentId}",
+                                    factory = StudentFinancialDetailsViewModelFactory(dest.studentId, repository)
+                                )
+                                StudentFinancialDetailsScreen(viewModel = studentFinancialDetailsViewModel)
+                                BackHandler {
+                                    navDestination = NavDestination.Main
+                                }
                             }
-                        } else {
-                            MainScreen(
-                                studentsViewModel = studentsViewModel,
-                                settingsViewModel = settingsViewModel,
-                                attendanceViewModel = attendanceViewModel,
-                                financialViewModel = financialViewModel,
-                                onNavigateToFinancialDetails = { selectedFinancialStudentId = it },
-                                onNavigateToAttendanceDetails = { selectedAttendanceStudentId = it }
-                            )
+                            is NavDestination.AttendanceDetails -> {
+                                val studentAttendanceDetailsViewModel: StudentAttendanceDetailsViewModel = viewModel(
+                                    key = "att_${dest.studentId}",
+                                    factory = StudentAttendanceDetailsViewModelFactory(dest.studentId, repository)
+                                )
+                                StudentAttendanceDetailsScreen(viewModel = studentAttendanceDetailsViewModel)
+                                BackHandler {
+                                    navDestination = NavDestination.Main
+                                }
+                            }
                         }
                     }
                 }

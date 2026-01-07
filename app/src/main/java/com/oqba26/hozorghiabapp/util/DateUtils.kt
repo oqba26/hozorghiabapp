@@ -1,9 +1,12 @@
+@file:Suppress("unused")
+
 package com.oqba26.hozorghiabapp.util
 
 import saman.zamani.persiandate.PersianDate
 import java.time.LocalDate
 import java.time.ZoneId
 import java.util.Date
+import java.util.Locale
 
 
 // --- توابع کمکی برای کلاس PersianDate ---
@@ -18,8 +21,9 @@ fun PersianDate.toPersianDateFullString(): String {
 }
 
 /** فرمت کامل تاریخ و زمان: ساعت ۱۰:۳۰ و تاریخ دوشنبه ۳ آذر ۱۴۰۴ */
+
 fun PersianDate.toPersianDateTimeString(): String {
-    val time = "${this.hour}:${String.format("%02d", this.minute)}"
+    val time = "${this.hour}:${String.format(Locale.US, "%02d", this.minute)}"
     val date = this.toPersianDateFullString()
     return "ساعت $time و تاریخ $date".englishDigitsToPersian()
 }
@@ -34,8 +38,8 @@ fun PersianDate.toPersianDateShortString(): String {
 
 /** فرمت عددی تاریخ: ۱۴۰۴/۹/۳ */
 fun PersianDate.toPersianDateNumericString(): String {
-    val day = String.format("%02d", this.shDay)
-    val month = String.format("%02d", this.shMonth)
+    val day = String.format(Locale.US, "%02d", this.shDay)
+    val month = String.format(Locale.US, "%02d", this.shMonth)
     val year = this.shYear
     return "$day/$month/$year".englishDigitsToPersian()
 }

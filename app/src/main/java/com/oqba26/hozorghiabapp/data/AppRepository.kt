@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import saman.zamani.persiandate.PersianDate
 import java.time.LocalDate
-import java.sql.Date
 
 interface AppRepository {
     fun getAttendanceForDate(date: LocalDate): Flow<List<AttendanceItemUi>>
@@ -152,19 +151,18 @@ class AppRepositoryImpl(
         ) { student, allRecords ->
             val filteredRecords = allRecords.mapNotNull { record ->
                 try {
-                    val localDate = LocalDate.parse(record.date)
-                    val pDate = PersianDate(java.sql.Date.valueOf(localDate))
+                    val pDate = PersianDate(java.sql.Date.valueOf(record.date))
                     if (pDate.shYear == year) {
                         record to pDate
                     } else null
-                } catch (e: Exception) { null }
+                } catch (_: Exception) { null }
             }
 
             val groupedByMonth = filteredRecords.groupBy { it.second.shMonth }
 
             val monthsList = (1..12).map { month ->
                 val monthName = PersianDate().apply { shMonth = month }.monthName
-                val days = groupedByMonth[month]?.map { (record, pDate) ->
+                val days = groupedByMonth[month]?.map { (record, _) ->
                     DayAttendanceStatus(
                         date = record.date,
                         isPresent = record.present,
@@ -176,8 +174,8 @@ class AppRepositoryImpl(
             }
 
             StudentAttendanceDetailsUiState(
-                studentId = student?.id ?: 0,
-                studentName = student?.fullName ?: "",
+                studentId = student.id,
+                studentName = student.fullName,
                 year = year,
                 months = monthsList
             )

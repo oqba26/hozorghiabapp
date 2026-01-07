@@ -25,7 +25,7 @@
     <string name="toggle_payment_status">تغییر وضعیت پرداخت</string>
     <string name="previous_year">سال قبل</string>
     <string name="next_year">سال بعد</string>
-    <string name="add_new_student_suffix"> جدید</string>
+    <string name="add_new_student_title">دانش آموز جدید</string>
     <string name="student_name_placeholder">نام دانش آموز</string>
     <string name="add_button">افزودن</string>
     <string name="students_list_title">لیست دانش آموزان</string>
@@ -41,4 +41,8 @@
     <string name="dialog_cancel">لغو</string>
     <string name="delete_student_confirmation">آیا از حذف این دانش آموز مطمئن هستید؟</string>
     <string name="warning">هشدار</string>
+    <string name="attendance_details_title">جزئیات حضور و غیاب %s</string>
+    <string name="no_records_found_for_year">رکوردی برای سال %s یافت نشد</string>
+    <string name="year_prefix">سال %s</string>
+    <string name="recorded_at_time">ثبت شده در ساعت %s</string>
 </resources>
