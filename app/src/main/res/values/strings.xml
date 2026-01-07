@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">حضور غیاب</string>
+    <string name="previous_day">روز قبل</string>
+    <string name="next_day">روز بعد</string>
+    <string name="no_students_registered">دانش آموزی ثبت نشده است.</string>
+
+    <!-- Main Screen Tabs -->
+    <string name="tab_students">دانش آموزان</string>
+    <string name="tab_attendance">حضور و غیاب</string>
+    <string name="tab_financial">شهریه</string>
+    <string name="tab_settings">تنظیمات</string>
+
+    <!-- Attendance -->
+    <string name="present">حاضر</string>
+    <string name="absent">غایب</string>
+    <string name="attendance_section_unknown">نامشخص</string>
+    <string name="attendance_section_present">حاضرها</string>
+    <string name="attendance_section_absent">غایب‌ها</string>
+
+    <!-- Financial -->
+    <string name="paid">پرداخت شده</string>
+    <string name="not_paid">پرداخت نشده</string>
+    <string name="previous_month">ماه قبل</string>
+    <string name="next_month">ماه بعد</string>
+    <string name="toggle_payment_status">تغییر وضعیت پرداخت</string>
+    <string name="previous_year">سال قبل</string>
+    <string name="next_year">سال بعد</string>
+    <string name="add_new_student_suffix"> جدید</string>
+    <string name="student_name_placeholder">نام دانش آموز</string>
+    <string name="add_button">افزودن</string>
+    <string name="students_list_title">لیست دانش آموزان</string>
+    <string name="delete_button">حذف</string>
+    <string name="monthly_fee_label">مستمری ماهانه (تومان)</string>
+    <string name="monthly_fee_placeholder">مثلاً ۲۰۰٬۰۰۰</string>
+    <string name="save_button">ذخیره</string>
+    <string name="font_label">فونت</string>
+    <string name="font_vazirmatn">وزیرمتن</string>
+    <string name="font_byekan">بی‌یکان</string>
+    <string name="font_iraniansans">ایران‌سنس</string>
+    <string name="dialog_confirm">تایید</string>
+    <string name="dialog_cancel">لغو</string>
+    <string name="delete_student_confirmation">آیا از حذف این دانش آموز مطمئن هستید؟</string>
+    <string name="warning">هشدار</string>
+</resources>
