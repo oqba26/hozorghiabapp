@@ -2,6 +2,7 @@
 
 package com.oqba26.hozorghiabapp.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,21 +34,12 @@ import com.oqba26.hozorghiabapp.viewmodel.StudentsViewModel
 import com.oqba26.hozorghiabapp.util.englishDigitsToPersian
 
 @Composable
-fun StudentsScreen(viewModel: StudentsViewModel) {
-    val students by viewModel.students.collectAsState()
-    var studentToDelete by remember { mutableStateOf<StudentEntity?>(null) }
 
-    if (studentToDelete != null) {
-        MessageBox(
-            title = stringResource(R.string.warning),
-            message = stringResource(R.string.delete_student_confirmation),
-            onConfirm = {
-                viewModel.deleteStudent(studentToDelete!!)
-                studentToDelete = null
-            },
-            onDismiss = { studentToDelete = null }
-        )
-    }
+fun StudentsScreen(
+    viewModel: StudentsViewModel,
+    onStudentClick: (Long) -> Unit
+) {
+    val students by viewModel.students.collectAsState()
 
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -96,7 +88,7 @@ fun StudentsScreen(viewModel: StudentsViewModel) {
                     StudentRow(
                         student = student,
                         index = index + 1,
-                        onDeleteClick = { studentToDelete = student }
+                        onClick = { onStudentClick(student.id) }
                     )
                 }
             }
@@ -108,24 +100,22 @@ fun StudentsScreen(viewModel: StudentsViewModel) {
 fun StudentRow(
     student: StudentEntity,
     index: Int,
-    onDeleteClick: () -> Unit
+    onClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp)
+            .clickable(onClick = onClick)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
+            horizontalArrangement = Arrangement.Start
         ) {
             Text(
                 text = "${index.toString().englishDigitsToPersian()}. ${student.fullName}",
                 style = MaterialTheme.typography.bodyLarge
             )
-            Button(onClick = onDeleteClick) {
-                Text(stringResource(R.string.delete_button))
-            }
         }
         HorizontalDivider(modifier = Modifier.padding(top = 4.dp))
     }

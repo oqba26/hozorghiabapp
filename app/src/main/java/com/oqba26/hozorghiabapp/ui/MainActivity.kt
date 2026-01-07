@@ -56,6 +56,7 @@ sealed interface NavDestination {
     data object Main : NavDestination
     data class FinancialDetails(val studentId: Long) : NavDestination
     data class AttendanceDetails(val studentId: Long) : NavDestination
+    data class StudentDetails(val studentId: Long) : NavDestination
 }
 
 class MainActivity : ComponentActivity() {
@@ -99,7 +100,8 @@ class MainActivity : ComponentActivity() {
                                     attendanceViewModel = attendanceViewModel,
                                     financialViewModel = financialViewModel,
                                     onNavigateToFinancialDetails = { navDestination = NavDestination.FinancialDetails(it) },
-                                    onNavigateToAttendanceDetails = { navDestination = NavDestination.AttendanceDetails(it) }
+                                    onNavigateToAttendanceDetails = { navDestination = NavDestination.AttendanceDetails(it) },
+                                    onNavigateToStudentDetails = { navDestination = NavDestination.StudentDetails(it) }
                                 )
                             }
                             is NavDestination.FinancialDetails -> {
@@ -122,6 +124,24 @@ class MainActivity : ComponentActivity() {
                                     navDestination = NavDestination.Main
                                 }
                             }
+                            is NavDestination.StudentDetails -> {
+                                val studentAttendanceDetailsViewModel: StudentAttendanceDetailsViewModel = viewModel(
+                                    key = "att_details_${dest.studentId}",
+                                    factory = StudentAttendanceDetailsViewModelFactory(dest.studentId, repository)
+                                )
+                                val studentFinancialDetailsViewModel: StudentFinancialDetailsViewModel = viewModel(
+                                    key = "fin_details_${dest.studentId}",
+                                    factory = StudentFinancialDetailsViewModelFactory(dest.studentId, repository)
+                                )
+                                StudentDetailsScreen(
+                                    attendanceViewModel = studentAttendanceDetailsViewModel,
+                                    financialViewModel = studentFinancialDetailsViewModel,
+                                    onBack = { navDestination = NavDestination.Main }
+                                )
+                                BackHandler {
+                                    navDestination = NavDestination.Main
+                                }
+                            }
                         }
                     }
                 }
@@ -138,7 +158,8 @@ fun MainScreen(
     attendanceViewModel: AttendanceViewModel,
     financialViewModel: FinancialViewModel,
     onNavigateToFinancialDetails: (Long) -> Unit,
-    onNavigateToAttendanceDetails: (Long) -> Unit
+    onNavigateToAttendanceDetails: (Long) -> Unit,
+    onNavigateToStudentDetails: (Long) -> Unit
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
@@ -180,7 +201,7 @@ fun MainScreen(
         Box(modifier = Modifier.padding(innerPadding).fillMaxSize()) {
             Crossfade(targetState = selectedTabIndex, label = "TabTransition") { index ->
                 when (index) {
-                    0 -> StudentsScreen(studentsViewModel)
+                    0 -> StudentsScreen(studentsViewModel, onStudentClick = onNavigateToStudentDetails)
                     1 -> AttendanceScreen(attendanceViewModel, onNavigateToAttendanceDetails)
                     2 -> FinancialScreen(financialViewModel, onNavigateToFinancialDetails)
                     3 -> SettingsScreen(settingsViewModel)

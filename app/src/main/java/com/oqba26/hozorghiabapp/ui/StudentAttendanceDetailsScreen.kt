@@ -14,6 +14,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.oqba26.hozorghiabapp.DayAttendanceStatus
 import com.oqba26.hozorghiabapp.R
+import com.oqba26.hozorghiabapp.StudentAttendanceDetailsUiState
 import com.oqba26.hozorghiabapp.util.englishDigitsToPersian
 import com.oqba26.hozorghiabapp.util.toPersianDateFullString
 import com.oqba26.hozorghiabapp.viewmodel.StudentAttendanceDetailsViewModel
@@ -49,7 +50,7 @@ fun StudentAttendanceDetailsScreen(viewModel: StudentAttendanceDetailsViewModel)
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StudentAttendanceDetailsContent(
-    uiState: com.oqba26.hozorghiabapp.viewmodel.StudentAttendanceDetailsUiState,
+    uiState: StudentAttendanceDetailsUiState,
     modifier: Modifier = Modifier,
     onPreviousYear: () -> Unit,
     onNextYear: () -> Unit
