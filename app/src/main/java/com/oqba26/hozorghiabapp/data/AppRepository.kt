@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import saman.zamani.persiandate.PersianDate
 import java.time.LocalDate
+import java.sql.Date
 
 interface AppRepository {
     fun getAttendanceForDate(date: LocalDate): Flow<List<AttendanceItemUi>>
@@ -140,4 +141,50 @@ class AppRepositoryImpl(
                     isEnabled = isEnabled
                 )
             }
-            StudentFinancialDetailsUiS
+            StudentFinancialDetailsUiState(year, months, student.fullName)
+        }
+    }
+
+    override fun getStudentAttendanceDetails(studentId: Long, year: Int): Flow<StudentAttendanceDetailsUiState> {
+        return combine(
+            studentDao.getStudentByIdFlow(studentId),
+            attendanceDao.getAttendanceForStudentFlow(studentId)
+        ) { student, allRecords ->
+            val filteredRecords = allRecords.mapNotNull { record ->
+                try {
+                    val localDate = LocalDate.parse(record.date)
+                    val pDate = PersianDate(java.sql.Date.valueOf(localDate))
+                    if (pDate.shYear == year) {
+                        record to pDate
+                    } else null
+                } catch (e: Exception) { null }
+            }
+
+            val groupedByMonth = filteredRecords.groupBy { it.second.shMonth }
+
+            val monthsList = (1..12).map { month ->
+                val monthName = PersianDate().apply { shMonth = month }.monthName
+                val days = groupedByMonth[month]?.map { (record, pDate) ->
+                    DayAttendanceStatus(
+                        date = record.date,
+                        isPresent = record.present,
+                        timestamp = record.attendanceTimestamp
+                    )
+                }?.sortedBy { it.date } ?: emptyList()
+                
+                MonthAttendanceSummary(month, monthName, days)
+            }
+
+            StudentAttendanceDetailsUiState(
+                studentId = student?.id ?: 0,
+                studentName = student?.fullName ?: "",
+                year = year,
+                months = monthsList
+            )
+        }
+    }
+
+    override fun getMonthlyFee(): Flow<Int> {
+        return context.settingsFlow().map { it.monthlyFee }
+    }
+}

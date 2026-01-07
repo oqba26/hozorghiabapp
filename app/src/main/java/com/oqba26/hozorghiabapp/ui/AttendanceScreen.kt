@@ -40,7 +40,10 @@ import com.oqba26.hozorghiabapp.util.toPersianDateShortString
 import com.oqba26.hozorghiabapp.viewmodel.AttendanceViewModel
 
 @Composable
-fun AttendanceScreen(viewModel: AttendanceViewModel) {
+fun AttendanceScreen(
+    viewModel: AttendanceViewModel,
+    onStudentClick: (Long) -> Unit
+) {
     val uiState by viewModel.uiState.collectAsState()
     
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -76,21 +79,36 @@ fun AttendanceScreen(viewModel: AttendanceViewModel) {
                     if (uiState.unknown.isNotEmpty()) {
                         item(key = "header_u") { SectionHeader(title = stringResource(R.string.attendance_section_unknown)) }
                         itemsIndexed(uiState.unknown, key = { _, item -> "u_${item.studentId}" }) { index, item ->
-                            AttendanceRow(item = item, index = index + 1, onSetAttendance = viewModel::setAttendance)
+                            AttendanceRow(
+                                item = item,
+                                index = index + 1,
+                                onSetAttendance = viewModel::setAttendance,
+                                onClick = { onStudentClick(item.studentId) }
+                            )
                         }
                     }
 
                     if (uiState.present.isNotEmpty()) {
                         item(key = "header_p") { SectionHeader(title = stringResource(R.string.attendance_section_present)) }
                         itemsIndexed(uiState.present, key = { _, item -> "p_${item.studentId}" }) { index, item ->
-                            AttendanceRow(item = item, index = index + 1, onSetAttendance = viewModel::setAttendance)
+                            AttendanceRow(
+                                item = item,
+                                index = index + 1,
+                                onSetAttendance = viewModel::setAttendance,
+                                onClick = { onStudentClick(item.studentId) }
+                            )
                         }
                     }
 
                     if (uiState.absent.isNotEmpty()) {
                         item(key = "header_a") { SectionHeader(title = stringResource(R.string.attendance_section_absent)) }
                         itemsIndexed(uiState.absent, key = { _, item -> "a_${item.studentId}" }) { index, item ->
-                            AttendanceRow(item = item, index = index + 1, onSetAttendance = viewModel::setAttendance)
+                            AttendanceRow(
+                                item = item,
+                                index = index + 1,
+                                onSetAttendance = viewModel::setAttendance,
+                                onClick = { onStudentClick(item.studentId) }
+                            )
                         }
                     }
                 }
@@ -133,9 +151,11 @@ private fun DaySelector(
 private fun AttendanceRow(
     item: AttendanceItemUi,
     index: Int,
-    onSetAttendance: (Long, Boolean) -> Unit
+    onSetAttendance: (Long, Boolean) -> Unit,
+    onClick: () -> Unit
 ) {
     Surface(
+        onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
         tonalElevation = 2.dp,

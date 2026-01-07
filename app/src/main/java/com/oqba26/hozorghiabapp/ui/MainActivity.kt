@@ -64,7 +64,8 @@ class MainActivity : ComponentActivity() {
                 FinancialViewModelFactory(repository)
             }
 
-            var selectedStudentId by remember { mutableStateOf<Long?>(null) }
+            var selectedFinancialStudentId by remember { mutableStateOf<Long?>(null) }
+            var selectedAttendanceStudentId by remember { mutableStateOf<Long?>(null) }
 
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                 HozorGhiabAppTheme(fontKey = settings.fontKey) {
@@ -72,14 +73,23 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
                     ) {
-                        if (selectedStudentId != null) {
+                        if (selectedFinancialStudentId != null) {
                             val studentFinancialDetailsViewModel: StudentFinancialDetailsViewModel = viewModel(
-                                key = selectedStudentId.toString(),
-                                factory = StudentFinancialDetailsViewModelFactory(selectedStudentId!!, repository)
+                                key = "fin_${selectedFinancialStudentId}",
+                                factory = StudentFinancialDetailsViewModelFactory(selectedFinancialStudentId!!, repository)
                             )
                             StudentFinancialDetailsScreen(viewModel = studentFinancialDetailsViewModel)
                             BackHandler {
-                                selectedStudentId = null
+                                selectedFinancialStudentId = null
+                            }
+                        } else if (selectedAttendanceStudentId != null) {
+                            val studentAttendanceDetailsViewModel: StudentAttendanceDetailsViewModel = viewModel(
+                                key = "att_${selectedAttendanceStudentId}",
+                                factory = StudentAttendanceDetailsViewModelFactory(selectedAttendanceStudentId!!, repository)
+                            )
+                            StudentAttendanceDetailsScreen(viewModel = studentAttendanceDetailsViewModel)
+                            BackHandler {
+                                selectedAttendanceStudentId = null
                             }
                         } else {
                             MainScreen(
@@ -87,9 +97,8 @@ class MainActivity : ComponentActivity() {
                                 settingsViewModel = settingsViewModel,
                                 attendanceViewModel = attendanceViewModel,
                                 financialViewModel = financialViewModel,
-                                onNavigateToStudentDetails = {
-                                    selectedStudentId = it
-                                }
+                                onNavigateToFinancialDetails = { selectedFinancialStudentId = it },
+                                onNavigateToAttendanceDetails = { selectedAttendanceStudentId = it }
                             )
                         }
                     }
@@ -106,7 +115,8 @@ fun MainScreen(
     settingsViewModel: SettingsViewModel,
     attendanceViewModel: AttendanceViewModel,
     financialViewModel: FinancialViewModel,
-    onNavigateToStudentDetails: (Long) -> Unit
+    onNavigateToFinancialDetails: (Long) -> Unit,
+    onNavigateToAttendanceDetails: (Long) -> Unit
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
 
@@ -149,8 +159,8 @@ fun MainScreen(
             Crossfade(targetState = selectedTabIndex, label = "TabTransition") { index ->
                 when (index) {
                     0 -> StudentsScreen(studentsViewModel)
-                    1 -> AttendanceScreen(attendanceViewModel)
-                    2 -> FinancialScreen(financialViewModel, onNavigateToStudentDetails)
+                    1 -> AttendanceScreen(attendanceViewModel, onNavigateToAttendanceDetails)
+                    2 -> FinancialScreen(financialViewModel, onNavigateToFinancialDetails)
                     3 -> SettingsScreen(settingsViewModel)
                 }
             }
