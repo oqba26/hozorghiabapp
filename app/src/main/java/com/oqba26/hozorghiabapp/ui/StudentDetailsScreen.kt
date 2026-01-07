@@ -1,3 +1,5 @@
+@file:Suppress("AssignedValueIsNeverRead")
+
 package com.oqba26.hozorghiabapp.ui
 
 import android.widget.Toast
@@ -17,7 +19,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -164,7 +166,7 @@ fun StudentDetailsScreen(
                         modifier = Modifier.weight(1f),
                         label = "پرداختی سال",
                         value = "${totalPaidAmount.toPersianPrice()} ت",
-                        icon = Icons.Default.List, 
+                        icon = Icons.AutoMirrored.Filled.List,
                         color = Color(0xFF1976D2)
                     )
                 }
